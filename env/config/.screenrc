@@ -1,0 +1,19 @@
+~/.screenrc
+
+# kill splash screen
+startup_message off
+
+# replace C-a with C-t
+escape      ^Jj
+
+# show original screen when exit from emacs/vi
+altscreen   on
+
+# disable flash screen bell
+vbell       off
+
+# show caption at bottom of screen
+
+hardstatus on
+hardstatus alwayslastline
+hardstatus string "%{= kG}%-w%{.cW}%n %t%{-}%+w %=%{= kG} %H %{..Y} %Y/%m/%d %c:%s "
