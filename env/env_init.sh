@@ -75,7 +75,7 @@ install_emacs() {
 
 install_screen() {
     echo "安装screen..."
-    sudo yum install -y screen
+    sudo apt-get install -y screen
     if [ $? -eq 0 ]; then
             echo "安装screen完成"
     else
@@ -86,7 +86,7 @@ install_screen() {
 
 install_docker() {
     echo "安装docker..."
-    sudo yum install -y docker
+    sudo apt-get install -y docker
     if [ $? -eq 0 ]; then
             echo "安装docker完成"
     else
@@ -129,10 +129,10 @@ install_bazel() {
     tar -xzf $BAZEL_TAR
 }
 # 执行脚本
-init_yum
+#init_yum
 copy_config_files
-install_emacs
+#install_emacs
 install_screen
-install_docker
+#install_docker
 
 echo "环境初始化完成."

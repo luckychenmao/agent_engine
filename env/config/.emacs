@@ -11,6 +11,11 @@
              '("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/") t)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("gnu" . "https://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives
+             (cons "gnu-devel" "https://elpa.gnu.org/devel/")
+                          t)
 (package-initialize)
 
 (setq grep-command "grep --exclude=\"*\\.svn*\" -nHi -e ")
@@ -30,16 +35,18 @@
 (global-set-key  (kbd "C-x d") 'windmove-down)
 (global-set-key  (kbd "C-x C-b") 'magit-log-buffer-file)
 (global-set-key  (kbd "C-x C-b") 'magit-log-buffer-file)
+(global-set-key (kbd "C-x C-m") 'compile)
 (global-set-key [f5] 'refresh-buffer)
 (global-set-key [f6] 'my-compile)
 (global-set-key [f7] 'eshell)
 (global-set-key [f8] 'open-eshell-other-buffer)
 (global-set-key [f9] 'compile)
-(load "/usr/share/emacs/site-lisp/site-start.d/clang-format.el")
 (global-set-key [f11] 'clang-format-region)
 (global-set-key [f12] 'clang-format-buffer)
 
 ;;compilation settings
+(setq compile-command "bazel build //agent_engine/... -c dbg --config=clang --test_arg='--gtest_filter=*.*' --test_output=streamed --sandbox_debug --cache_test_results=no")
+
 (defun my-compile()
   "Save buffers and start compile"
   (interactive)
@@ -122,7 +129,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(bazel clang-format magit standard-themes helm)))
+ '(package-selected-packages
+   '(impatient-mode markdown-preview-mode grip-mode markdown-mode bazel clang-format magit standard-themes helm)))
 
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -218,3 +226,29 @@
 (setq c-basic-offset 4)
 
 (setq ispell-dictionary "en")
+
+(load "/usr/share/emacs/site-lisp/clang-format-14/clang-format.el")
+
+(defun revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be reverted. They
+will be reverted though if they were modified outside emacs.
+Buffers visiting files which do not exist any more or are no longer readable
+will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
+(put 'erase-buffer 'disabled nil)
