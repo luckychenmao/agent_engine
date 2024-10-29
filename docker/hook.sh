@@ -9,6 +9,3 @@ if [ -f "/tmp/custom_after_start.sh" ]; then
 else
     echo "ignore start hook!"
 fi
-
-# 持续保持运行
-tail -f /dev/null
