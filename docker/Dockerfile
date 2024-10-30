@@ -24,6 +24,7 @@ RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.aliyun.com/ubuntu
     python3-pip \
     screen \
     gdb \
+    sudo \
     linux-tools-common \
     linux-tools-generic \
     texinfo \
