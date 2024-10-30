@@ -68,18 +68,6 @@ prepare_ssh()
     chown -R $USER:$GROUP $CUR_DIR/.ssh
 }
 
-# 生成 sshme.sh
-cat <<EOL > "${DOCKER_NAME}/sshme.sh"
-ssh $USER@`hostname` -o ConnectTimeout=1 -p 22 \$*
-EOL
-
-# 生成 stop.sh
-cat <<EOL > "${DOCKER_NAME}/stop.sh"
-#!/bin/bash
-docker stop $DOCKER_NAME
-docker rm $DOCKER_NAME
-EOL
-
 cat > ${DOCKER_NAME}/custom_after_start.sh <<'EOF'
 #!/bin/bash
 
@@ -104,45 +92,26 @@ if [ -f /tmp/.passwd ]; then
 fi
 
 if [ -f /tmp/.group ]; then
-    hippogroup=`cat /tmp/.group | awk -F: '{print $1}'`
-    cat /etc/group | awk -F: '{print $1}' | grep -w -q $hippogroup
-    if [ $? -eq 0 ]; then
-        sed -i "/$hippogroup:x:/d" /etc/group
-    fi
-    echo `cat /tmp/.group` >> /etc/group
+    while read -r line; do
+        hippogroup=$(echo "$line" | awk -F: '{print $1}')
+        cat /etc/group | awk -F: '{print $1}' | grep -w -q $hippogroup
+        if [ $? -eq 0 ]; then
+            sed -i "/$hippogroup:x:/d" /etc/group
+        fi
+        echo "$line" >> /etc/group
+    done <<< /tmp/.group
 fi
 
 echo -e "\n$USER ALL=(ALL) NOPASSWD:ALL\n" >> /etc/sudoers
 
-SYSTEMD_SSH_SERVICE_PATH="/etc/systemd/system/sshd.service.d/custom.conf"
-mkdir -p /etc/systemd/system/sshd.service.d
-cat <<EOF3 > "$SYSTEMD_SSH_SERVICE_PATH"
-[Service]
-ExecStart=
-ExecStart=/sbin/start_sshd
-EOF3
-
-# 创建 /sbin/start_sshd 脚本
-cat <<EOF2 >/sbin/start_sshd
-#!/bin/bash
-PYTHON=/usr/bin/python3
-SSHD=/usr/sbin/sshd
 for i in {1..5}; do
-    \$SSHD -p 48719 \$*
-    RETVAL=\$?
-    if [ \$RETVAL -eq 0 ] ; then
-        echo "48719" > /etc/sshd_port
+    /usr/sbin/sshd -p RANDOM_PORT $*
+    RETVAL=$?
+    if [ $RETVAL -eq 0 ] ; then
+        echo "Port RANDOM_PORT" >> /etc/ssh/sshd_config
         break
     fi
 done
-EOF2
-
-# 设置执行权限
-chmod a+x /sbin/start_sshd
-
-# 重新加载 systemd 配置并重启 sshd 服务
-systemctl daemon-reload
-systemctl restart sshd
 
 # change home dir ownership to make sshd work
 if [ -d /home/$USER ]; then
@@ -155,22 +124,35 @@ if [ -f /etc/bash.bashrc ]; then
     echo -e "\nalias ll='ls -l'" >> /etc/bash.bashrc
 fi
 
-
-
 # 启动 SSH 服务
 service ssh start
-
 EOF
+
+SSHPORT=`python3 -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()'`
+sed -i "s/\RANDOM_PORT/$SSHPORT/g" ${DOCKER_NAME}/custom_after_start.sh
+
+# 生成 sshme.sh
+cat <<EOL > "${DOCKER_NAME}/sshme.sh"
+ssh $USER@`hostname` -o ConnectTimeout=1 -p $SSHPORT \$*
+EOL
+
+# 生成 stop.sh
+cat <<EOL > "${DOCKER_NAME}/stop.sh"
+#!/bin/bash
+docker stop $DOCKER_NAME
+docker rm $DOCKER_NAME
+EOL
+
+prepare_ssh
+prepare_account
 
 # 修改脚本权限
 chmod +x "${DOCKER_NAME}/sshme.sh" "${DOCKER_NAME}/stop.sh"
 chmod a+x ${DOCKER_NAME}/custom_after_start.sh
 chown  $USER:$GROUP ${CUR_DIR}/custom_after_start.sh
 
-prepare_ssh
-prepare_account
 
-docker run -it --rm --ulimit nofile=655350:655350 \
+docker run --ulimit nofile=655350:655350 \
        --cap-add SYS_ADMIN -d --net=host \
        --name "$DOCKER_NAME" \
        -v "$HOME_DIR":"$HOME_DIR" \
@@ -178,6 +160,6 @@ docker run -it --rm --ulimit nofile=655350:655350 \
        -v $CUR_DIR/.passwd:/tmp/.passwd \
        -v $CUR_DIR/.group:/tmp/.group \
        -v $CUR_DIR/custom_after_start.sh:/tmp/custom_after_start.sh \
-       "$IMAGE_ID" /bin/bash
+       "$IMAGE_ID"
 
 echo "容器[$DOCKER_NAME]创建成功，请在目录 $CUR_DIR 中使用 sshme 进入容器."
