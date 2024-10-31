@@ -47,6 +47,15 @@
 ;;compilation settings
 (setq compile-command "bazel build //agent_engine/... -c dbg --config=clang --test_arg='--gtest_filter=*.*' --test_output=streamed --sandbox_debug --cache_test_results=no")
 
+(defun grepcpp(command-args)
+  (interactive
+   (list (read-from-minibuffer "Run grep *.cpp *.h *.cc: "
+                               grep-cpp-command
+                               nil
+                               nil
+                               'grep-cpp-history)))
+  (grep command-args))
+
 (defun my-compile()
   "Save buffers and start compile"
   (interactive)
@@ -252,3 +261,36 @@ will be killed."
             (message "Killed non-existing/unreadable file buffer: %s" filename))))))
   (message "Finished reverting buffers containing unmodified files."))
 (put 'erase-buffer 'disabled nil)
+
+(defun wcy-c-open-other-file ()
+  "if current file is a header file, then open the
+       corresponding source file or vice versa.
+      "
+  (interactive)
+  (let ((f (buffer-file-name))
+        (headers '("h" "hpp" "hxx"))
+        (sources '("c" "cxx" "cpp" "cc")))
+    (if f
+        (let* ((b (file-name-sans-extension f))
+               (x (file-name-extension f))
+               (s (cond
+                   ((member x headers) sources)
+                   ((member x sources) headers)
+                   (t nil)))
+               (return-value nil))
+          (while s
+            (let ((try-file (concat b "." (car s))))
+              (cond
+               ((find-buffer-visiting try-file)
+                (switch-to-buffer (find-buffer-visiting
+                                   try-file))
+                (setq s nil
+                      return-value t))
+               ((file-readable-p try-file)
+                (find-file try-file)
+                (setq s nil
+                      return-value t))
+               (t (setq s (cdr s))))))
+          return-value))))
+
+(global-set-key (kbd "C-x t") 'wcy-c-open-other-file)
