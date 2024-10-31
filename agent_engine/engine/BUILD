@@ -1,0 +1,39 @@
+package(default_visibility=['//agent_engine/engine:__subpackages__'])
+
+cc_library(
+    name='worker_base_lib',
+    srcs=glob([
+        'WorkerBase.cpp',
+        'main.cpp'
+    ]),
+    hdrs=glob(['WorkerBase.h']),
+    copts=['-Werror'],
+    include_prefix='engine',
+    deps=[
+        '//agent_engine/util:log',
+        '//agent_engine/util:scope',
+    ],
+    alwayslink=1
+)
+
+cc_library(
+    name='admin_lib',
+    srcs=glob(['AdminWorker.cpp']),
+    hdrs=glob(['AdminWorker.h']),
+    copts=['-Werror'],
+    include_prefix='engine',
+    deps=[
+        ':worker_base_lib',
+    ],
+    alwayslink=1
+)
+
+cc_binary(
+    name='admin_bin',
+    srcs=['AdminWorkerCreator.cpp'],
+    copts=['-Werror'],
+    visibility=['//visibility:public'],
+    deps=[
+        ':admin_lib',
+    ]
+)
