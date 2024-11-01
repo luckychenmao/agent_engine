@@ -1,7 +1,7 @@
 #pragma once
 
-#include "engine/WorkerBase.h"
-#include "util/Log.h"
+#include "engine/worker_base.h"
+#include "util/log.h"
 
 namespace engine {
 

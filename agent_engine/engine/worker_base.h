@@ -1,7 +1,7 @@
 #pragma once
 
-#include "util/Log.h"
-#include "util/OptionParser.h"
+#include "util/log.h"
+#include "util/option_parser.h"
 
 namespace engine {
 

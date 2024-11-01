@@ -1,8 +1,8 @@
 #include <memory>
 
-#include "engine/WorkerBase.h"
-#include "util/Log.h"
-#include "util/Scope.h"
+#include "engine/worker_base.h"
+#include "util/log.h"
+#include "util/scope.h"
 
 using namespace engine;
 

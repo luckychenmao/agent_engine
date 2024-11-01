@@ -12,7 +12,7 @@ def main():
     current_dir = os.path.basename(os.getcwd())
 
     h_filename = f"{class_name}.h"
-    cpp_filename = f"{class_name}.cpp"
+    cpp_filename = f"{class_name}.cc"
 
     if os.path.exists(h_filename) or os.path.exists(cpp_filename):
         print(f"Error: {h_filename} or {cpp_filename} already exists.")
@@ -20,7 +20,7 @@ def main():
 
     h_content = f"""#pragma once
 
-#include "util/Log.h"
+#include "util/log.h"
 
 namespace {current_dir} {{
 

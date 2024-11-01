@@ -1,6 +1,6 @@
-#include "util/StringTokenizer.h"
+#include "util/string_tokenizer.h"
 
-#include "util/Log.h"
+#include "util/log.h"
 
 using namespace std;
 namespace util {

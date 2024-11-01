@@ -3,9 +3,9 @@
 #include <iostream>
 
 #include "alog/Configurator.h"
-#include "alog/LogStream.h" // IWYU pragma: export
-#include "alog/Logger.h"    // IWYU pragma: export
-#include "util/TimeUtility.h"
+#include "alog/LogStream.h"
+#include "alog/Logger.h"
+#include "util/time_utility.h"
 
 #define ROOT_LOG_CONFIG() alog::Configurator::configureRootLogger()
 #define LOG_CONFIG(filename)                                                                                           \
@@ -114,7 +114,7 @@
 #define INTERVAL_LOG2(logInterval, level, format, args...)                                                             \
     do {                                                                                                               \
         static int64_t logTimestamp;                                                                                   \
-        int64_t now = util::TimeUtility::CurrentTimeInSeconds();                                                      \
+        int64_t now = util::TimeUtility::CurrentTimeInSeconds();                                                       \
         if (now - logTimestamp > logInterval) {                                                                        \
             LOG(level, format, ##args);                                                                                \
             logTimestamp = now;                                                                                        \

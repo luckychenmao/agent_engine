@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "util/LockFree.h"
+#include "util/lock_free.h"
 
 namespace util {
 

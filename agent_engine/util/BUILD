@@ -1,6 +1,6 @@
 cc_library(
     name='log',
-    hdrs=['Log.h'],
+    hdrs=['log.h'],
     include_prefix='util',
     visibility=['//visibility:public'],
     deps=[
@@ -12,8 +12,8 @@ cc_library(
 
 cc_library(
     name='time',
-    srcs=['TimeUtility.cpp'],
-    hdrs=['TimeUtility.h'],
+    srcs=['time_utility.cc'],
+    hdrs=['time_utility.h'],
     include_prefix='util',
     visibility=['//visibility:public'],
     alwayslink=True
@@ -21,7 +21,7 @@ cc_library(
 
 cc_library(
     name='scope',
-    hdrs=['Scope.h'],
+    hdrs=['scope.h'],
     include_prefix='util',
     visibility=['//visibility:public'],
     alwayslink=True
@@ -30,7 +30,7 @@ cc_library(
 cc_test(
     name = "util_test",
     srcs = glob([
-        "test/*.cpp",
+        "test/*.cc",
     ]),
     copts = ["-fno-access-control"],
     visibility = ["//visibility:public"],
@@ -43,12 +43,12 @@ cc_test(
 cc_library(
     name='option_parser',
     srcs=[
-        'CommandLineParameter.cpp',
-        'OptionParser.cpp'
+        'command_line_parameter.cc',
+        'option_parser.cc'
     ],
     hdrs=[
-        'CommandLineParameter.h',
-        'OptionParser.h'
+        'command_line_parameter.h',
+        'option_parser.h'
     ],
     include_prefix='util',
     visibility=['//visibility:public'],
@@ -62,12 +62,12 @@ cc_library(
 cc_library(
     name='string_helper',
     srcs=[
-        'StringTokenizer.cpp',
-        'StringUtil.cpp'
+        'string_tokenizer.cc',
+        'string_util.cc'
     ],
     hdrs=[
-        'StringTokenizer.h',
-        'StringUtil.h'
+        'string_tokenizer.h',
+        'string_util.h'
     ],
     include_prefix='util',
     visibility=['//visibility:public'],
@@ -80,15 +80,15 @@ cc_library(
 
 cc_library(
     name='file_util',
-    srcs=['FileUtil.cpp'],
-    hdrs=['FileUtil.h'],
+    srcs=['file_util.cc'],
+    hdrs=['file_util.h'],
     include_prefix='util',
     visibility=['//visibility:public'],
 )
 
 cc_library(
     name='common_macros',
-    hdrs=['CommonMacros.h'],
+    hdrs=['common_macros.h'],
     include_prefix='util',
     visibility=['//visibility:public'],
     alwayslink=True

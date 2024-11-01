@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string>
 
-#include "util/Log.h"
-#include "util/Singleton.h"
-#include "util/StringUtil.h"
+#include "util/log.h"
+#include "util/singleton.h"
+#include "util/string_util.h"
 
 namespace util {
 

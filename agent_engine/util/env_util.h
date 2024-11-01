@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string>
 
-#include "util/EnvUtilImpl.h"
-#include "util/Log.h"
-#include "util/Singleton.h"
+#include "util/env_util_impl.h"
+#include "util/log.h"
+#include "util/singleton.h"
 
 namespace util {
 

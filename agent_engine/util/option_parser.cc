@@ -1,13 +1,13 @@
-#include "util/OptionParser.h"
+#include "util/option_parser.h"
 
 #include <iostream>
 #include <limits>
 #include <stdio.h>
 #include <utility>
 
-#include "util/CommandLineParameter.h"
-#include "util/Log.h"
-#include "util/StringUtil.h"
+#include "util/command_line_parameter.h"
+#include "util/log.h"
+#include "util/string_util.h"
 
 using namespace std;
 namespace util {

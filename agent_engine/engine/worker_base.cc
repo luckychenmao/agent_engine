@@ -1,4 +1,4 @@
-#include "engine/WorkerBase.h"
+#include "engine/worker_base.h"
 
 #include <atomic>
 #include <chrono>
@@ -6,8 +6,8 @@
 #include <thread>
 #include <unordered_map>
 
-#include "engine/Common.h"
-#include "util/FileUtil.h"
+#include "engine/common.h"
+#include "util/file_util.h"
 
 using namespace util;
 

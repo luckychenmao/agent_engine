@@ -11,7 +11,7 @@ def create_test():
     class_name = sys.argv[1]
     current_dir = os.path.basename(os.getcwd())
     test_dir = "test"
-    test_filename = f"{class_name}Test.cpp"
+    test_filename = f"{class_name}_test.cc"
     test_file_path = os.path.join(test_dir, test_filename)
 
     if not os.path.exists(test_dir):
@@ -21,7 +21,7 @@ def create_test():
         print(f"Error: {test_file_path} already exists.")
         return
 
-    # Content for MyClassTest.cpp
+    # Content for MyClassTest.cc
     test_content = f"""#include "{current_dir}/{class_name}.h"
 
 #include <gtest/gtest.h>

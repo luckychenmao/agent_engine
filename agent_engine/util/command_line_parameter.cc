@@ -1,11 +1,11 @@
-#include "util/CommandLineParameter.h"
+#include "util/command_line_parameter.h"
 
 #include <iosfwd>
 #include <stdint.h>
 #include <string.h>
 
-#include "util/Log.h"
-#include "util/StringTokenizer.h"
+#include "util/log.h"
+#include "util/string_tokenizer.h"
 
 namespace util {
 DECLARE_AND_SETUP_LOGGER(util, CommandLineParameter);

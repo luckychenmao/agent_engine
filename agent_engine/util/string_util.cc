@@ -1,4 +1,4 @@
-#include "util/StringUtil.h"
+#include "util/string_util.h"
 
 #include <algorithm>
 #include <assert.h>
