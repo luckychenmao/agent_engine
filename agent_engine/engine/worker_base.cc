@@ -21,10 +21,10 @@ std::atomic_bool is_stop(false);
 class SignalHandlerGuard {
 public:
     SignalHandlerGuard() {
-        previousHandlers[SIGINT] = std::signal(SIGINT, handleSignal);
-        previousHandlers[SIGTERM] = std::signal(SIGTERM, handleSignal);
-        previousHandlers[SIGUSR1] = std::signal(SIGUSR1, handleSignal);
-        previousHandlers[SIGUSR2] = std::signal(SIGUSR2, handleSignal);
+        previousHandlers[SIGINT] = std::signal(SIGINT, HandleSignal);
+        previousHandlers[SIGTERM] = std::signal(SIGTERM, HandleSignal);
+        previousHandlers[SIGUSR1] = std::signal(SIGUSR1, HandleSignal);
+        previousHandlers[SIGUSR2] = std::signal(SIGUSR2, HandleSignal);
     }
 
     ~SignalHandlerGuard() {
@@ -36,7 +36,7 @@ public:
     }
 
 private:
-    static void handleSignal(int sig) {
+    static void HandleSignal(int sig) {
         if (!is_stop) {
             fprintf(stdout, "receive signal [%d], stop", sig);
             is_stop = true;
@@ -50,57 +50,57 @@ private:
 WorkerBase::WorkerBase() {}
 WorkerBase::~WorkerBase() {}
 
-bool WorkerBase::init(int argc, char **argv) {
-    if (!initOptions(argc, argv)) {
+bool WorkerBase::Init(int argc, char **argv) {
+    if (!InitOptions(argc, argv)) {
         LOG(WARN, "init options failed.");
         return false;
     }
-    if (!initLog()) {
+    if (!InitLog()) {
         LOG(WARN, "init options failed.");
         return false;
     }
-    if (!doInit()) {
-        LOG(WARN, "doInit failed.");
+    if (!DoInit()) {
+        LOG(WARN, "DoInit failed.");
         return false;
     }
     return true;
 }
 
-bool WorkerBase::run() {
+bool WorkerBase::Run() {
     is_stop = false;
     is_stopped_ = false;
 
     SignalHandlerGuard signalGuard; // Ensures RAII for signals
 
-    while (!is_stop && !isStopped()) {
-        if (!doStart()) {
-            doStop();
+    while (!is_stop && !IsStopped()) {
+        if (!DoStart()) {
+            DoStop();
             return false;
         }
 
         LOG(INFO, "Worker is running...");
 
-        while (!is_stop && !isStopped()) {
+        while (!is_stop && !IsStopped()) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
-        doStop();
+        DoStop();
         LOG(INFO, "Worker is stopped.");
     }
 
     return true;
 }
 
-void WorkerBase::stop() { is_stopped_ = true; }
+void WorkerBase::Stop() { is_stopped_ = true; }
 
-bool WorkerBase::isStopped() const { return is_stopped_; }
+bool WorkerBase::IsStopped() const { return is_stopped_; }
 
-bool WorkerBase::registerRpcService() {
+bool WorkerBase::RegisterRpcService() {
     // Register RPC services
     return true;
 }
 
-bool WorkerBase::initOptions(int argc, char **argv) {
+bool WorkerBase::InitOptions(int argc, char **argv) {
     option_parser_.AddOption("-l", "--logConf", "logConf", OptionParser::kOptString, false);
     option_parser_.AddOption("-w", "--workDir", "workDir", OptionParser::kOptString, false);
     option_parser_.AddOption("-t", "--threadNum", "threadNum", kRpcServerThreadNum);
@@ -125,7 +125,7 @@ bool WorkerBase::initOptions(int argc, char **argv) {
     return true;
 }
 
-bool WorkerBase::initLog() {
+bool WorkerBase::InitLog() {
     if (log_config_file_.empty()) {
         ROOT_LOG_CONFIG();
         return true;

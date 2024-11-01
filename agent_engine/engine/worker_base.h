@@ -13,18 +13,18 @@ public:
     WorkerBase &operator=(const WorkerBase &) = delete;
 
 public:
-    bool init(int argc, char **argv);
-    bool run();
-    void stop();
-    bool isStopped() const;
-    bool registerRpcService();
+    bool Init(int argc, char **argv);
+    bool Run();
+    void Stop();
+    bool IsStopped() const;
+    bool RegisterRpcService();
 
 protected:
-    virtual bool initOptions(int argc, char **argv);
-    virtual bool initLog();
-    virtual bool doInit() { return true; }
-    virtual bool doStart() { return true; }
-    virtual bool doStop() { return true; }
+    virtual bool InitOptions(int argc, char **argv);
+    virtual bool InitLog();
+    virtual bool DoInit() { return true; }
+    virtual bool DoStart() { return true; }
+    virtual bool DoStop() { return true; }
 
 private:
     volatile bool is_stopped_ = true;

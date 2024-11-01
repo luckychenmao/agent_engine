@@ -15,12 +15,12 @@ int32_t main(int argc, char **argv) {
         std::cerr << "create worker failed" << std::endl;
         return -1;
     }
-    bool succ = worker->init(argc, argv);
+    bool succ = worker->Init(argc, argv);
     if (!succ) {
         std::cerr << "app init failed" << std::endl;
         return -1;
     }
-    succ = worker->run();
+    succ = worker->Run();
     if (!succ) {
         std::cerr << "app start failed" << std::endl;
         return -1;
