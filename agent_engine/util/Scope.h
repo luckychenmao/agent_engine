@@ -8,17 +8,17 @@ namespace util {
 class ScopeGuard {
 public:
     template <typename F>
-    ScopeGuard(F &&f) : _exitFunc(std::forward<F>(f)) {}
+    ScopeGuard(F &&f) : exit_func_(std::forward<F>(f)) {}
 
     ~ScopeGuard() {
-        if (_exitFunc) {
-            _exitFunc();
+        if (exit_func_) {
+            exit_func_();
         }
     }
-    void release() { _exitFunc = std::function<void()>(); }
+    void Release() { exit_func_ = std::function<void()>(); }
 
 private:
-    std::function<void()> _exitFunc;
+    std::function<void()> exit_func_;
 };
 
 } // namespace util

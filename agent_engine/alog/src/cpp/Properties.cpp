@@ -55,8 +55,8 @@ void Properties::load(istream& in) {
 
         pos = command.find('=');
         if (pos != string::npos) {
-            leftSide = StringUtil::trim(command.substr(0, pos));
-            rightSide = StringUtil::trim(command.substr(pos + 1, command.size() - pos));
+            leftSide = StringUtil::Trim(command.substr(0, pos));
+            rightSide = StringUtil::Trim(command.substr(pos + 1, command.size() - pos));
             _substituteVariables(rightSide);
         } else {
             continue;

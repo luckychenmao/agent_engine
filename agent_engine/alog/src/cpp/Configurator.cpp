@@ -110,7 +110,7 @@ void Configurator::initAllAppenders(AppenderMap &allAppenders, Properties &prope
         const std::string& key = (*i).first;
         std::list<std::string> propNameParts;
         std::back_insert_iterator<std::list<std::string> > pnpIt(propNameParts);
-        StringUtil::split(pnpIt, key, '.');
+        StringUtil::Split(pnpIt, key, '.');
         std::list<std::string>::const_iterator i2 = propNameParts.begin();
         std::list<std::string>::const_iterator iEnd = propNameParts.end();
         if (++i2 == iEnd)
@@ -169,14 +169,14 @@ void Configurator::configureLogger(const std::string& loggerName, AppenderMap &a
 
     std::list<std::string> tokens;
     std::back_insert_iterator<std::list<std::string> > tokIt(tokens);
-    StringUtil::split(tokIt, (*iter).second, ',');
+    StringUtil::Split(tokIt, (*iter).second, ',');
     std::list<std::string>::const_iterator i = tokens.begin();
     std::list<std::string>::const_iterator iEnd = tokens.end();
 
     uint32_t level = LOG_LEVEL_NOTSET;
     if (i != iEnd)
     {
-        std::string  levelStr = StringUtil::trim(*i++);
+        std::string  levelStr = StringUtil::Trim(*i++);
         if (levelStr != "")
         {
             level = getLevelByString(levelStr);
@@ -196,7 +196,7 @@ void Configurator::configureLogger(const std::string& loggerName, AppenderMap &a
     logger->removeAllAppenders();
     for (/**/; i != iEnd; ++i)
     {
-        std::string appenderName = StringUtil::trim(*i);
+        std::string appenderName = StringUtil::Trim(*i);
         AppenderMap::const_iterator appIt = allAppenders.find(appenderName);
         if (appIt == allAppenders.end())
         {

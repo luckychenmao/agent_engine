@@ -3,6 +3,6 @@
 
 namespace engine {
 
-WorkerBase *createWorker() { return new AdminWorker(); }
+WorkerBase *CreateWorker() { return new AdminWorker(); }
 
 }; // namespace engine

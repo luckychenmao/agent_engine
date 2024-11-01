@@ -20,7 +20,7 @@
 using namespace std;
 namespace alog {
 
-string StringUtil::trim(const string& str) {
+string StringUtil::Trim(const string& str) {
     static const char* whiteSpace = " \t\r\n";
 
     if (str.empty())
@@ -35,13 +35,13 @@ string StringUtil::trim(const string& str) {
     return string(str, beginPos, endPos - beginPos + 1);
 }
 
-unsigned int StringUtil::split(vector<string>& vec,
+unsigned int StringUtil::Split(vector<string>& vec,
                                const string& str,
                                char delimiter, unsigned int maxSegments)
 {
     vec.clear();
     back_insert_iterator<vector<string> > it(vec);
-    return split(it, str, delimiter, maxSegments);
+    return Split(it, str, delimiter, maxSegments);
 }
 
 }

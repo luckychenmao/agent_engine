@@ -29,7 +29,7 @@ public:
       *@biref Returns a string identical to the given string but without leading
       *@n or trailing HTABs or spaces.
     **/
-    static std::string trim(const std::string& s);
+    static std::string Trim(const std::string& s);
 
     /**
       *@brief splits a string into a vector of string segments based on the
@@ -44,7 +44,7 @@ public:
       *@n character.
     *@return The actual number of segments (limited by maxSegments).
     **/
-    static unsigned int split(std::vector<std::string>& v,
+    static unsigned int Split(std::vector<std::string>& v,
                               const std::string& s, char delimiter,
                               unsigned int maxSegments = INT_MAX);
     /**
@@ -57,7 +57,7 @@ public:
        @param maxSegments The maximum number of segments.
        @return The actual number of segments (limited by maxSegments).
     **/
-    template<typename T> static unsigned int split(T& output,
+    template<typename T> static unsigned int Split(T& output,
             const std::string& s, char delimiter,
             unsigned int maxSegments = INT_MAX)
     {

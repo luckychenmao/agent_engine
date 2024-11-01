@@ -43,7 +43,7 @@ private:
     cpp_content = f"""#include "{current_dir}/{class_name}.h"
 
 namespace {current_dir} {{
-LOG_SETUP(swift, {class_name});
+LOG_SETUP({current_dir}, {class_name});
 
 {class_name}::{class_name}() {{}}
 {class_name}::~{class_name}() {{}}

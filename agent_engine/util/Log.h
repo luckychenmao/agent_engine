@@ -114,7 +114,7 @@
 #define INTERVAL_LOG2(logInterval, level, format, args...)                                                             \
     do {                                                                                                               \
         static int64_t logTimestamp;                                                                                   \
-        int64_t now = autil::TimeUtility::currentTimeInSeconds();                                                      \
+        int64_t now = util::TimeUtility::CurrentTimeInSeconds();                                                      \
         if (now - logTimestamp > logInterval) {                                                                        \
             LOG(level, format, ##args);                                                                                \
             logTimestamp = now;                                                                                        \

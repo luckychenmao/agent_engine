@@ -1,6 +1,19 @@
 package(default_visibility=['//agent_engine/engine:__subpackages__'])
 
 cc_library(
+    name='common_lib',
+    srcs=glob([
+        'Common.cpp',
+    ]),
+    hdrs=glob([
+        'Common.h'
+    ]),
+    copts=['-Werror'],
+    include_prefix='engine',
+    alwayslink=1
+)
+
+cc_library(
     name='worker_base_lib',
     srcs=glob([
         'WorkerBase.cpp',
@@ -12,6 +25,10 @@ cc_library(
     deps=[
         '//agent_engine/util:log',
         '//agent_engine/util:scope',
+        '//agent_engine/util:option_parser',
+        '//agent_engine/util:string_helper',
+        '//agent_engine/util:file_util',
+        ':common_lib',
     ],
     alwayslink=1
 )
