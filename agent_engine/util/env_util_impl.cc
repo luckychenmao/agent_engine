@@ -5,25 +5,25 @@ namespace util {
 LOG_SETUP(util, EnvUtilImpl);
 
 std::string EnvUtilImpl::GetEnv(const std::string &key, const std::string &defaultValue) {
-    ScopedReadLock lock(_rwLock);
+    std::shared_lock _(lock_);
     const char *str = std::getenv(key.c_str());
     return str == nullptr ? defaultValue : std::string(str);
 }
 
 bool EnvUtilImpl::SetEnv(const std::string &env, const std::string &value, bool overwrite) {
     LOG(INFO, "setenv [%s], value [%s]", env.c_str(), value.c_str());
-    ScopedWriteLock lock(_rwLock);
+    std::unique_lock _(lock_);
     return setenv(env.c_str(), value.c_str(), overwrite ? 1 : 0) == 0;
 }
 
 bool EnvUtilImpl::UnsetEnv(const std::string &env) {
     LOG(INFO, "unset env [%s]", env.c_str());
-    ScopedWriteLock lock(_rwLock);
+    std::unique_lock _(lock_);
     return unsetenv(env.c_str()) == 0;
 }
 
 bool EnvUtilImpl::HasEnv(const std::string &env) {
-    ScopedReadLock lock(_rwLock);
+    std::shared_lock _(lock_);
     const char *str = std::getenv(env.c_str());
     return str != nullptr;
 }
@@ -37,7 +37,7 @@ std::string EnvUtilImpl::EnvReplace(const std::string &value) {
     const char *ptr = value.c_str() + first_dollar;
     const char *end = value.c_str() + value.size();
     const char *var_begin = NULL;
-    ScopedReadLock lock(_rwLock);
+    std::shared_lock _(lock_);
     for (; ptr < end; ++ptr) {
         if (*ptr == '$' && *(ptr + 1) == '{') {
             if (var_begin != NULL) {

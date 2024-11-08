@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+
+option cc_enable_arenas = true;
+
+service AgentChatService {
+    rpc Chat (stream ChatRequest) returns (stream ChatResponse);
+}
+
+message ChatRequest {
+    uint32 appid = 1;
+    uint32 userid = 2;
+    bytes content = 3;
+}
+
+message ChatResponse {
+    uint32 appid = 1;
+    uint32 userid = 2;
+    bytes content = 3;
+}
