@@ -221,7 +221,7 @@ public:
     static bool FromBinaryString(const std::string &str, T &x);
 
     template <typename... Args>
-    static std::string formatString(const std::string &format, Args... args);
+    static std::string FormatString(const std::string &format, Args... args);
 
     static std::string Join(const std::vector<std::string> &array, const std::string &seperator);
 
@@ -571,7 +571,7 @@ inline const std::string &StringUtil::GetValueFromMap(const std::string &key,
 }
 
 template <typename... Args>
-std::string StringUtil::formatString(const std::string &format, Args... args) {
+std::string StringUtil::FormatString(const std::string &format, Args... args) {
     int size_buf = std::snprintf(nullptr, 0, format.c_str(), args...) + 1;
     if (size_buf <= 0) {
         return kNullString;

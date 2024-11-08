@@ -50,6 +50,9 @@ COPY hook.sh /etc/my_init.d/hook.sh
 RUN chmod +x /etc/my_init.d/hook.sh
 CMD ["/etc/my_init.d/hook.sh"]
 
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && \
+sudo apt-get install -y nodejs
+
 # Install Bazel from official binary installer
 # https://bazel.build/install/ubuntu?hl=zh-cn#binary-installer
 RUN wget https://github.com/bazelbuild/bazel/releases/download/7.4.0rc4/bazel-7.4.0rc4-installer-linux-x86_64.sh && \

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <shared_mutex>
 #include <stdlib.h>
 #include <string>
 
@@ -14,7 +15,7 @@ class EnvUtilImpl {
 public:
     template <typename T>
     T GetEnv(const std::string &key, const T &defaultValue) {
-        std::lock_guard<std::mutex> _(lock_);
+        std::shared_lock _(lock_);
         const char *str = std::getenv(key.c_str());
         if (!str) {
             return defaultValue;
@@ -34,7 +35,7 @@ public:
     }
     template <typename T>
     bool GetEnvWithoutDefault(const std::string &key, T &value) {
-        std::lock_guard<std::mutex> _(lock_);
+        std::shared_lock _(lock_);
         const char *str = std::getenv(key.c_str());
         if (!str) {
             return false;
@@ -53,7 +54,7 @@ public:
     std::string EnvReplace(const std::string &value);
 
 private:
-    std::mutex lock_;
+    std::shared_mutex lock_;
 
 private:
     LOG_DECLARE();

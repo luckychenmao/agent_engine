@@ -102,7 +102,7 @@ if [ -f /tmp/.group ]; then
     done <<< /tmp/.group
 fi
 
-echo -e "\n$USER ALL=(ALL) NOPASSWD:ALL\n" >> /etc/sudoers
+echo -e "\nUSER_NAME ALL=(ALL) NOPASSWD:ALL\n" >> /etc/sudoers
 
 for i in {1..5}; do
     /usr/sbin/sshd -p RANDOM_PORT $*
@@ -130,6 +130,7 @@ EOF
 
 SSHPORT=`python3 -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()'`
 sed -i "s/\RANDOM_PORT/$SSHPORT/g" ${DOCKER_NAME}/custom_after_start.sh
+sed -i "s/\USER_NAME/$USER/g" ${DOCKER_NAME}/custom_after_start.sh
 
 # 生成 sshme.sh
 cat <<EOL > "${DOCKER_NAME}/sshme.sh"

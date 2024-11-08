@@ -27,17 +27,18 @@ cc_library(
     alwayslink=True
 )
 
-cc_test(
-    name = "util_test",
-    srcs = glob([
-        "test/*.cc",
-    ]),
-    copts = ["-fno-access-control"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":time",
-         "@googletest//:gtest_main",
+cc_library(
+    name='thread',
+    srcs=[
+        'thread.cc',
     ],
+    hdrs=[
+        'thread.h',
+    ],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[':exception', ':log', ':string_helper'],
+    alwayslink=True
 )
 
 cc_library(
@@ -92,4 +93,109 @@ cc_library(
     include_prefix='util',
     visibility=['//visibility:public'],
     alwayslink=True
+)
+
+cc_library(
+    name='singleton',
+    hdrs=['singleton.h'],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    alwayslink=True
+)
+
+cc_library(
+    name='env_util',
+    srcs=['env_util_impl.cc'],
+    hdrs=['env_util.h', 'env_util_impl.h'],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[':string_helper', ':log', ':singleton'],
+    alwayslink=True
+)
+
+cc_library(
+    name='backtrace',
+    hdrs=['backtrace.h'],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[]
+)
+
+cc_library(
+    name='exception',
+    srcs=['legacy/exception.cpp'],
+    hdrs=['legacy/exception.h'],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[':backtrace', ':env_util'],
+    alwayslink=True
+)
+
+cc_library(
+    name='json_base',
+    srcs=[
+        'legacy/astream.cpp',
+        'legacy/json.cpp',
+        'legacy/json_string_enhanced.cpp',
+        'legacy/string_conversion.cpp',
+        'legacy/string_utf8.cpp'
+    ],
+    hdrs=[
+        'legacy/any.h',
+        'legacy/astream.h',
+        'legacy/json.h',
+        'legacy/jsonizable_exception.h',
+        'legacy/string_tools.h'
+    ],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[
+        ':exception',
+        ':string_helper'
+    ],
+    alwayslink=True
+)
+
+cc_library(
+    name='fast_json',
+    srcs=['legacy/fast_jsonizable.cpp'],
+    hdrs=[
+        'legacy/fast_jsonizable.h',
+        'legacy/fast_jsonizable_dec.h'
+    ],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[
+        ':json_base',
+        '@rapidjson'
+    ],
+    alwayslink=True
+)
+
+cc_library(
+    name='json',
+    hdrs=[
+        'legacy/jsonizable.h',
+        'legacy/legacy_jsonizable.h',
+        'legacy/legacy_jsonizable_dec.h'
+    ],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[
+        ':fast_json', ':json_base', '@rapidjson'
+    ],
+    alwayslink=True
+)
+
+cc_test(
+    name = "util_test",
+    srcs = glob([
+        "test/*.cc",
+    ]),
+    copts = ["-fno-access-control"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":time",
+         "@googletest//:gtest_main",
+    ],
 )

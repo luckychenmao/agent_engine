@@ -2,6 +2,13 @@
 
 import os
 import sys
+import re
+
+def camel_to_snake(name):
+    # 在大写字母前添加下划线，并将其转换为小写
+    s1 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
+    # 全部转换为小写
+    return s1.lower()
 
 def main():
     if len(sys.argv) != 2:
@@ -11,8 +18,8 @@ def main():
     class_name = sys.argv[1]
     current_dir = os.path.basename(os.getcwd())
 
-    h_filename = f"{class_name}.h"
-    cpp_filename = f"{class_name}.cc"
+    h_filename = f"{camel_to_snake(class_name)}.h"
+    cpp_filename = f"{camel_to_snake(class_name)}.cc"
 
     if os.path.exists(h_filename) or os.path.exists(cpp_filename):
         print(f"Error: {h_filename} or {cpp_filename} already exists.")
@@ -40,7 +47,7 @@ private:
 }} // namespace {current_dir}
 """
 
-    cpp_content = f"""#include "{current_dir}/{class_name}.h"
+    cpp_content = f"""#include "{current_dir}/{camel_to_snake(class_name)}.h"
 
 namespace {current_dir} {{
 LOG_SETUP({current_dir}, {class_name});
