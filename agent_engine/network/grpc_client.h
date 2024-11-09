@@ -1,6 +1,8 @@
 #pragma once
 
+#include "network/completion_queue_status.h"
 #include "util/log.h"
+#include "util/thread.h"
 
 namespace grpc {
 class Alarm;
@@ -15,8 +17,8 @@ public:
     GrpcClient &operator=(const GrpcClient &) = delete;
 
 public:
-    bool start();
-    void stop();
+    bool Start();
+    void Stop();
     const CompletionQueueStatusPtr &GetCompletionQueue(size_t id);
 
 private:

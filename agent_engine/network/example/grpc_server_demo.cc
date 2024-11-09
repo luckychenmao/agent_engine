@@ -9,7 +9,7 @@ alog.rootLogger=INFO, defaultAppender
 alog.max_msg_len=65535
 alog.logger.swift.WorkerRunner=INFO, WorkerRunnerAppender
 alog.appender.defaultAppender=FileAppender
-alog.appender.defaultAppender.fileName=grpc_demo.log
+alog.appender.defaultAppender.fileName=grpc_server_demo.log
 alog.appender.defaultAppender.layout=PatternLayout
 alog.appender.defaultAppender.layout.LogPattern=[%%d] [%%l] [%%t,%%F -- %%f():%%n] [%%m]
 alog.appender.defaultAppender.cache_limit=128
@@ -33,6 +33,7 @@ int32_t main(int argc, char **argv) {
     DECLARE_AND_SETUP_LOGGER(grpc_demo, grpc_demo);
     LOG_CONFIG_FROM_STRING(FileLogConfig.c_str());
     network::ServerDescription desc;
+    desc.port = 33419;
     network::GrpcServer server;
     auto succ = server.Init(desc);
     if (!succ) {

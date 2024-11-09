@@ -9,11 +9,11 @@ LOG_SETUP(network, GrpcClient);
 GrpcClient::GrpcClient(size_t thread_num) : thread_num_(thread_num) {}
 
 GrpcClient::~GrpcClient() {
-    stop();
+    Stop();
     shutdown_alarms_.clear();
 }
 
-bool GrpcClient::start() {
+bool GrpcClient::Start() {
     for (size_t i = 0; i < thread_num_; ++i) {
         auto cq = std::make_shared<grpc::CompletionQueue>();
         completion_queues_.emplace_back(cq);
@@ -23,13 +23,13 @@ bool GrpcClient::start() {
     LOG(INFO, "grpc client [%p] started, threads [%lu]", this, thread_num_);
 }
 
-void GrpcClient::stop() {
+void GrpcClient::Stop() {
     for (const auto &cqs : completion_queues_) {
-        std::unique_lock _(cqs->enqueue_lock_);
+        std::unique_lock _(cqs->enqueue_lock);
         cqs->stopped = true;
     }
     for (const auto &cqs : completion_queues_) {
-        auto alarm = std::make_uniqe<grpc::Alarm>(cqs->cq.get(), gpr_now(GPR_CLOCK_MONOTONIC), nullptr);
+        auto alarm = std::make_unique<grpc::Alarm>(cqs->cq.get(), gpr_now(GPR_CLOCK_MONOTONIC), nullptr);
         shutdown_alarms_.push_back(std::move(alarm));
     }
     completion_queues_.clear();
@@ -40,7 +40,7 @@ void GrpcClient::stop() {
 const CompletionQueueStatusPtr &GrpcClient::GetCompletionQueue(size_t id) {
     if (completion_queues_.empty()) {
         LOG(WARN, "grpc client has not start");
-        return nullptr;
+        return CompletionQueueStatusPtr();
     }
     size_t index = id % completion_queues_.size();
     return completion_queues_[index];
@@ -61,7 +61,7 @@ void GrpcClient::WorkLoop(size_t idx, CompletionQueueStatusPtr status) {
             LOG(INFO, "vvv tag[%p]", tag);
         } else {
             // shutdown alarm
-            autil::ScopedReadWriteLock lock(status->enqueueLock, 'w');
+            std::unique_lock _(cqs->enqueue_lock);
             status->stopped = true;
             status->cq->Shutdown();
             LOG(INFO, "cq: %p shutdown", status->cq.get());

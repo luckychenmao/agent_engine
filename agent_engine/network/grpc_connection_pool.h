@@ -1,6 +1,7 @@
 #pragma once
 
 #include "util/log.h"
+#include <shared_mutex>
 
 namespace network {
 class GrpcClient;

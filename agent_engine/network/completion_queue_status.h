@@ -1,5 +1,7 @@
 #pragma once
 
+#include <shared_mutex>
+
 #include "util/log.h"
 
 namespace grpc {
