@@ -7,7 +7,7 @@
 static const std::string FileLogConfig = R"EOF(
 alog.rootLogger=INFO, defaultAppender
 alog.max_msg_len=65535
-alog.logger.swift.WorkerRunner=INFO, WorkerRunnerAppender
+alog.logger.agent.ClientDemo=INFO, WorkerRunnerAppender
 alog.appender.defaultAppender=FileAppender
 alog.appender.defaultAppender.fileName=grpc_server_demo.log
 alog.appender.defaultAppender.layout=PatternLayout

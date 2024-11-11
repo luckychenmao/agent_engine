@@ -2,6 +2,13 @@
 
 import os
 import sys
+import re
+
+def camel_to_snake(name):
+    # 在大写字母前添加下划线，并将其转换为小写
+    s1 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
+    # 全部转换为小写
+    return s1.lower()
 
 def create_test():
     if len(sys.argv) != 2:
@@ -11,7 +18,7 @@ def create_test():
     class_name = sys.argv[1]
     current_dir = os.path.basename(os.getcwd())
     test_dir = "test"
-    test_filename = f"{class_name}_test.cc"
+    test_filename = f"{camel_to_snake(class_name)}_test.cc"
     test_file_path = os.path.join(test_dir, test_filename)
 
     if not os.path.exists(test_dir):
@@ -22,11 +29,9 @@ def create_test():
         return
 
     # Content for MyClassTest.cc
-    test_content = f"""#include "{current_dir}/{class_name}.h"
+    test_content = f"""#include "{current_dir}/{camel_to_snake(class_name)}.h"
 
 #include <gtest/gtest.h>
-
-namespace {current_dir} {{
 
 class {class_name}Test : public ::testing::Test {{
 protected:
@@ -34,7 +39,6 @@ protected:
     void TearDown() override {{}}
 }};
 
-}} // namespace {current_dir}
 """
 
     with open(test_file_path, 'w') as test_file:

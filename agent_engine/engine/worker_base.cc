@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "engine/common.h"
+#include "engine/module_manager.h"
 #include "util/file_util.h"
 
 using namespace util;
@@ -59,6 +60,10 @@ bool WorkerBase::Init(int argc, char **argv) {
         LOG(WARN, "init options failed.");
         return false;
     }
+    if (!InitModuleManager()) {
+        LOG(WARN, "init module manager failed.");
+        return false;
+    }
     if (!DoInit()) {
         LOG(WARN, "DoInit failed.");
         return false;
@@ -68,13 +73,13 @@ bool WorkerBase::Init(int argc, char **argv) {
 
 bool WorkerBase::Run() {
     is_stop = false;
-    is_stopped_ = false;
+    stopped_ = false;
 
     SignalHandlerGuard signalGuard; // Ensures RAII for signals
 
     while (!is_stop && !IsStopped()) {
         if (!DoStart()) {
-            DoStop();
+            StopWorker();
             return false;
         }
 
@@ -84,16 +89,21 @@ bool WorkerBase::Run() {
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
-        DoStop();
+        StopWorker();
         LOG(INFO, "Worker is stopped.");
     }
 
     return true;
 }
 
-void WorkerBase::Stop() { is_stopped_ = true; }
+void WorkerBase::Stop() {
+    stopped_ = true;
+    if (module_manager_) {
+        module_manager_->Stop();
+    }
+}
 
-bool WorkerBase::IsStopped() const { return is_stopped_; }
+bool WorkerBase::IsStopped() const { return stopped_; }
 
 bool WorkerBase::RegisterRpcService() {
     // Register RPC services
@@ -148,4 +158,28 @@ bool WorkerBase::InitLog() {
     return true;
 }
 
+bool WorkerBase::InitModuleManager() {
+    module_manager_ = std::make_unique<ModuleManager>();
+    if (!module_manager_->Init()) {
+        LOG(ERROR, "module manager init failed.");
+        return false;
+    }
+    if (!module_manager_->Start()) {
+        LOG(ERROR, "module manager start failed.");
+        return false;
+    }
+    return true;
+}
+
+void WorkerBase::StopWorker() {
+    LOG(INFO, "Worker stopping...");
+    if (!DoStop()) {
+        LOG(WARN, "Worker do stop failed.");
+    }
+    if (module_manager_) {
+        module_manager_->Stop();
+        module_manager_.reset();
+    }
+    LOG(INFO, "Worker stopped.");
+}
 } // namespace engine

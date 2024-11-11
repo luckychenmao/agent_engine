@@ -6,20 +6,43 @@ cc_library(
         'common.cc',
     ]),
     hdrs=glob([
-        'common.h'
+        'common.h',
+        'creator_factory.h',
     ]),
     copts=['-Werror'],
     include_prefix='engine',
+    deps=[
+        '//agent_engine/util:singleton',
+    ],
     alwayslink=1
 )
+
+cc_library(
+    name='binary_main_lib',
+    srcs=glob([
+        'main.cc',
+    ]),
+    copts=['-Werror'],
+    include_prefix='engine',
+    deps=[
+        ':worker_base_lib',
+    ],
+    alwayslink=1
+)
+
 
 cc_library(
     name='worker_base_lib',
     srcs=glob([
         'worker_base.cc',
-        'main.cc'
+        'base_module.cc',
+        'module_manager.cc',
     ]),
-    hdrs=glob(['worker_base.h']),
+    hdrs=glob([
+        'worker_base.h',
+        'base_module.h',
+        'module_manager.h',
+    ]),
     copts=['-Werror'],
     include_prefix='engine',
     deps=[
@@ -28,6 +51,7 @@ cc_library(
         '//agent_engine/util:option_parser',
         '//agent_engine/util:string_helper',
         '//agent_engine/util:file_util',
+        '//agent_engine/util:singleton',
         ':common_lib',
     ],
     alwayslink=1
@@ -52,5 +76,29 @@ cc_binary(
     visibility=['//visibility:public'],
     deps=[
         ':admin_lib',
+        ':binary_main_lib'
+    ]
+)
+
+cc_library(
+    name='worker_lib',
+    srcs=glob(['agent_worker.cc']),
+    hdrs=glob(['agent_worker.h']),
+    copts=['-Werror'],
+    include_prefix='engine',
+    deps=[
+        ':worker_base_lib',
+    ],
+    alwayslink=1
+)
+
+cc_binary(
+    name='worker_bin',
+    srcs=['agent_worker_creator.cc'],
+    copts=['-Werror'],
+    visibility=['//visibility:public'],
+    deps=[
+        ':worker_lib',
+        ':binary_main_lib'
     ]
 )
