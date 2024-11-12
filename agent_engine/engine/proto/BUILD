@@ -10,12 +10,12 @@ proto_library(
 
 cpp_proto_library(
     name = "cpp_agent_service_proto",
-    strip_include_prefix='agent_service_grpc_pb/agent_engine/network',
+    strip_include_prefix='agent_service_grpc_pb/agent_engine/engine',
     protos = [":agent_service_proto"],
 )
 
 cpp_grpc_library(
     name = "agent_service_grpc",
-    strip_include_prefix='agent_service_grpc_pb/agent_engine/network',
+    strip_include_prefix='agent_service_grpc_pb/agent_engine/engine',
     protos = [":agent_service_proto"],
 )

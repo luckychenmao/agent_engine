@@ -12,8 +12,6 @@ public:
     AgentWorker(const AgentWorker &) = delete;
     AgentWorker &operator=(const AgentWorker &) = delete;
 
-public:
-
 private:
     LOG_DECLARE();
 };

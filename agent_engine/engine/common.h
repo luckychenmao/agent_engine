@@ -42,4 +42,8 @@ protected:                                                                      
 #define DEPEND_ON_5(Module, member) DEPEND_ON_IMPL(Module, member, 5);
 #define DEPEND_ON_6(Module, member) DEPEND_ON_IMPL(Module, member, 6);
 
+#define GRPC_METHOD_HELPER(method, req, resp)                                                                          \
+    ::grpc::Status method(::grpc::ServerContext *context, ::grpc : ServerReaderWriter<resp, req> *stream) override {   \
+        return ::grpc::Status::OK;                                                                                     \
+    }
 } // namespace engine

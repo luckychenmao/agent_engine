@@ -58,6 +58,27 @@ cc_library(
 )
 
 cc_library(
+    name='worker_modules_lib',
+    srcs=glob([
+        'modules/agent_service_module.cc',
+    ]),
+    hdrs=glob([
+        'modules/agent_service_module.h',
+    ]),
+    copts=['-Werror'],
+    include_prefix='engine',
+    deps=[
+        ':common_lib',
+        ':worker_base_lib',
+        '//agent_engine/network:grpc_server',
+        "//agent_engine/engine/proto:agent_service_grpc",
+    ],
+    alwayslink=1
+)
+
+
+
+cc_library(
     name='admin_lib',
     srcs=glob(['admin_worker.cc']),
     hdrs=glob(['admin_worker.h']),
@@ -88,6 +109,7 @@ cc_library(
     include_prefix='engine',
     deps=[
         ':worker_base_lib',
+        ':worker_modules_lib',
     ],
     alwayslink=1
 )

@@ -18,6 +18,8 @@ public:
 
 public:
     bool Init(const ServerDescription &desc);
+    bool RegisterService(grpc::Service *service);
+    bool Start();
     void Wait();
     void Stop();
 
@@ -31,7 +33,6 @@ private:
     std::vector<ServerCompletionQueuePtr> completion_queues_;
     std::vector<util::ThreadPtr> work_threads_;
     std::unique_ptr<grpc::Server> server_;
-    std::shared_ptr<grpc::Service> service_;
 
 private:
     static constexpr int32_t MaxMessageSize = 1024 * 1024 * 1024;

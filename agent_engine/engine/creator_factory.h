@@ -48,7 +48,8 @@ private:
 
 #define REGISTER_MODULE(Module)                                                                                        \
     __attribute__((constructor)) static void Register##Module() {                                                      \
-        util::Singleton<engine::CreatorFactory<kCreatorTypeModule>>::GetInstance()->AddCreatorFunc(                    \
+        std::cout << "aaa " << std::endl;                                                                              \
+        util::Singleton<engine::CreatorFactory<RegistryType::kCreatorTypeModule>>::GetInstance()->AddCreatorFunc(      \
             typeid(Module).name(), []() -> std::shared_ptr<engine::BaseModule> {                                       \
                 auto module = std::make_shared<Module>();                                                              \
                 module->SetName(typeid(Module).name());                                                                \
