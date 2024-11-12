@@ -4,10 +4,11 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "engine/base_module.h"
+#include "engine/common/base_module.h"
 #include "util/log.h"
 
 namespace engine {
+namespace common {
 class ModuleManager {
     using ModuleMap = std::unordered_map<std::string, std::shared_ptr<BaseModule>>;
     using ModuleCreatorFuncMap = std::unordered_map<std::string, ModuleCreatorFunc>;
@@ -57,4 +58,5 @@ std::shared_ptr<ModuleType> ModuleManager::GetModule() {
     }
     return std::dynamic_pointer_cast<ModuleType>(iter->second);
 }
+} // namespace common
 } // namespace engine

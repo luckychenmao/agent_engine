@@ -1,4 +1,4 @@
-#include "engine/worker_base.h"
+#include "engine/common/worker_base.h"
 
 #include <atomic>
 #include <chrono>
@@ -6,15 +6,16 @@
 #include <thread>
 #include <unordered_map>
 
-#include "engine/common.h"
-#include "engine/module_manager.h"
+#include "engine/common/common.h"
+#include "engine/common/module_manager.h"
 #include "util/file_util.h"
 
 using namespace util;
 
 namespace engine {
+namespace common {
 
-DECLARE_AND_SETUP_LOGGER(engine, WorkerBase);
+DECLARE_AND_SETUP_LOGGER(engine.common, WorkerBase);
 
 namespace {
 std::atomic_bool is_stop(false);
@@ -182,4 +183,5 @@ void WorkerBase::StopWorker() {
     }
     LOG(INFO, "Worker stopped.");
 }
+} // namespace common
 } // namespace engine

@@ -4,7 +4,7 @@
 #include <shared_mutex>
 
 #include "network/grpc_client.h"
-#include "proto/agent_service.grpc.pb.h"
+#include "engine/proto/agent_service.grpc.pb.h"
 
 namespace network {
 LOG_SETUP(network, GrpcConnection);

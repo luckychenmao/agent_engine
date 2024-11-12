@@ -4,6 +4,7 @@
 #include "util/option_parser.h"
 
 namespace engine {
+namespace common {
 class ModuleManager;
 class WorkerBase {
 public:
@@ -47,4 +48,5 @@ private:
 
 WorkerBase *CreateWorker();
 
+} // namespace common
 } // namespace engine

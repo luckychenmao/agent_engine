@@ -1,7 +1,8 @@
-#include "engine/base_module.h"
+#include "engine/common/base_module.h"
 
 namespace engine {
-LOG_SETUP(engine, BaseModule);
+namespace common {
+LOG_SETUP(engine.common, BaseModule);
 
 BaseModule::BaseModule() {}
 
@@ -56,4 +57,5 @@ void BaseModule::Clear() {
     bind_funcs_.clear();
 }
 
+} // namespace common
 } // namespace engine

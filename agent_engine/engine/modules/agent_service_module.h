@@ -1,7 +1,7 @@
 #pragma once
 
-#include "engine/base_module.h"
-#include "proto/agent_service.grpc.pb.h"
+#include "engine/common/base_module.h"
+#include "engine/proto/agent_service.grpc.pb.h"
 #include "util/log.h"
 
 namespace network {
@@ -9,8 +9,9 @@ class GrpcServer;
 }
 
 namespace engine {
+namespace modules {
 
-class AgentServiceModule : public BaseModule, public proto::AgentChatService::AsyncService {
+class AgentServiceModule : public common::BaseModule, public proto::AgentChatService::AsyncService {
 public:
     AgentServiceModule();
     ~AgentServiceModule();
@@ -31,5 +32,5 @@ private:
 private:
     LOG_DECLARE();
 };
-
+} // namespace modules
 } // namespace engine

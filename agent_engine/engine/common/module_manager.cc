@@ -1,10 +1,11 @@
-#include "engine/module_manager.h"
+#include "engine/common/module_manager.h"
 
-#include "engine/creator_factory.h"
+#include "engine/common/creator_factory.h"
 
 using namespace util;
 namespace engine {
-LOG_SETUP(engine, ModuleManager);
+namespace common {
+LOG_SETUP(engine.common, ModuleManager);
 
 ModuleManager::ModuleManager() {}
 
@@ -12,7 +13,7 @@ ModuleManager::~ModuleManager() { Stop(); }
 
 bool ModuleManager::Init() {
     module_creator_funcs_ =
-        Singleton<CreatorFactory<engine::RegistryType::kCreatorTypeModule>>::GetInstance()->GetCreatorFuncMap();
+        Singleton<CreatorFactory<RegistryType::kCreatorTypeModule>>::GetInstance()->GetCreatorFuncMap();
     std::lock_guard _(mutex_);
     if (!CreateModule()) {
         LOG(ERROR, "create module failed");
@@ -169,4 +170,5 @@ std::shared_ptr<BaseModule> ModuleManager::GetModule(const std::string &module_n
     }
     return it->second;
 }
+} // namespace common
 } // namespace engine

@@ -1,10 +1,10 @@
 #include <memory>
 
-#include "engine/worker_base.h"
+#include "engine/common/worker_base.h"
 #include "util/log.h"
 #include "util/scope.h"
 
-using namespace engine;
+using namespace engine::common;
 
 int32_t main(int argc, char **argv) {
     util::ScopeGuard _([] { LOG_SHUTDOWN(); });

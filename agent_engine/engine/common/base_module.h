@@ -6,10 +6,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "engine/common.h"
+#include "engine/common/common.h"
 #include "util/log.h"
 
 namespace engine {
+namespace common {
 class BaseModule;
 class ModuleManager;
 
@@ -61,4 +62,5 @@ private:
     LOG_DECLARE();
 };
 
+} // namespace common
 } // namespace engine

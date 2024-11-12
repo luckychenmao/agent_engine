@@ -2,7 +2,7 @@
 
 #include "network/grpc_connection.h"
 #include "network/grpc_connection_pool.h"
-#include "proto/agent_service.grpc.pb.h"
+#include "engine/proto/agent_service.grpc.pb.h"
 #include "util/log.h"
 #include "util/scope.h"
 

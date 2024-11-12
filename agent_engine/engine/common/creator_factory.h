@@ -1,9 +1,10 @@
 #pragma once
 
-#include "engine/base_module.h"
+#include "engine/common/base_module.h"
 #include "util/singleton.h"
 
 namespace engine {
+namespace common {
 enum class RegistryType {
     kCreatorTypeModule
 };
@@ -48,12 +49,12 @@ private:
 
 #define REGISTER_MODULE(Module)                                                                                        \
     __attribute__((constructor)) static void Register##Module() {                                                      \
-        std::cout << "aaa " << std::endl;                                                                              \
-        util::Singleton<engine::CreatorFactory<RegistryType::kCreatorTypeModule>>::GetInstance()->AddCreatorFunc(      \
-            typeid(Module).name(), []() -> std::shared_ptr<engine::BaseModule> {                                       \
+        util::Singleton<engine::common::CreatorFactory<RegistryType::kCreatorTypeModule>>::GetInstance()               \
+            ->AddCreatorFunc(typeid(Module).name(), []() -> std::shared_ptr<engine::common::BaseModule> {              \
                 auto module = std::make_shared<Module>();                                                              \
                 module->SetName(typeid(Module).name());                                                                \
                 return module;                                                                                         \
             });                                                                                                        \
     }
+} // namespace common
 } // namespace engine

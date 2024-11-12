@@ -38,7 +38,7 @@ cc_library(
     include_prefix='network',
     deps = [
         "@grpc//:grpc++",
-        "//agent_engine/network/proto:agent_service_grpc",
+        "//agent_engine/engine/proto:agent_service_grpc",
         "//agent_engine/util:json",
         "//agent_engine/util:scope",
         "//agent_engine/util:thread",

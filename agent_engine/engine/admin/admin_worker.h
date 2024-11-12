@@ -1,11 +1,12 @@
 #pragma once
 
-#include "engine/worker_base.h"
+#include "engine/common/worker_base.h"
 #include "util/log.h"
 
 namespace engine {
+namespace admin {
 
-class AdminWorker : public WorkerBase {
+class AdminWorker : public common::WorkerBase {
 public:
     AdminWorker();
     ~AdminWorker();
@@ -17,4 +18,5 @@ private:
     LOG_DECLARE();
 };
 
+} // namespace admin
 } // namespace engine

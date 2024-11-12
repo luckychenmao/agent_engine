@@ -6,7 +6,9 @@
 #include "network/server_config.h"
 
 namespace engine {
-LOG_SETUP(engine, AgentServiceModule);
+namespace modules {
+
+LOG_SETUP(engine.modules, AgentServiceModule);
 
 AgentServiceModule::AgentServiceModule() {}
 AgentServiceModule::~AgentServiceModule() {}
@@ -37,4 +39,5 @@ bool AgentServiceModule::DoUnload() {
 
 REGISTER_MODULE(AgentServiceModule);
 
+} // namespace modules
 } // namespace engine
