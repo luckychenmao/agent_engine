@@ -18,7 +18,7 @@
       > `git clone git@agent_engine.git`
    - 查看 docker images 找到最新版本镜像 tag
       > `docker images`，
-   - 使用脚本创建镜像 
+   - 使用脚本创建容器 
       > `~/agent_engine/docker/bin/create.sh [user_a] [tag]`
       >
       > 注意：如果 docker images 无可用镜像，说明环境为第一次创建，可使用`cd ~/agent_engine/docker;sh build_image.sh` 重新 build 镜像
