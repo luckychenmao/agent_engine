@@ -28,16 +28,39 @@ cc_library(
 )
 
 cc_library(
+    name='lock',
+    srcs=['lock.cc'],
+    hdrs=['lock.h', 'thread_annotations.h'],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    deps=[':time', 'common_macros'],
+    alwayslink=True
+)
+
+cc_library(
     name='thread',
     srcs=[
         'thread.cc',
+        'loop_thread.cc',
+        'thread_pool.cc',
+        'lock_free_thread_pool.cc',
+        'thread_auto_scaler.cc',
     ],
     hdrs=[
         'thread.h',
+        'loop_thread.h',
+        'thread_pool.h',
+        'lock_free_thread_pool.h',
+        'circular_queue.h',
+        'workitem.h',
+        'workitem_queue.h',
+        'lock_free_queue.h',
+        'lock_free.h',
+        'thread_auto_scaler.h',
     ],
     include_prefix='util',
     visibility=['//visibility:public'],
-    deps=[':exception', ':log', ':string_helper'],
+    deps=[':exception', ':log', ':string_helper', 'lock'],
     alwayslink=True
 )
 
