@@ -34,3 +34,6 @@
 bazel-*
 bazel.log
 MODULE.bazel.lock
+
+# Tmp
+chenqi
