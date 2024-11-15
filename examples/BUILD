@@ -9,6 +9,18 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = "bin_demo_libcurl_multi",
+    srcs = glob([
+        "gtest_demo_libcurl_multi_test.cpp",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@curl//:curl",  # bazel query @curl//...
+        "@googletest//:gtest_main",
+    ],
+)
+
 # 编译 library 目标
 cc_library(
     name = "gtest_demo_lib",
@@ -28,5 +40,18 @@ cc_test(
     deps = [
         "gtest_demo_lib",
          "@googletest//:gtest_main",
+    ],
+)
+
+
+cc_test(
+    name = "gtest_demo_rapidjson_test",
+    srcs = glob([
+        "gtest_demo_rapidjson_test.cpp",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@rapidjson//:rapidjson",
+        "@googletest//:gtest_main",
     ],
 )

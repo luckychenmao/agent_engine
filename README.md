@@ -11,4 +11,4 @@
 1. 环境准备参考 `env/README.md`
 2. 进入容器后，使用 bazel 编译项目
     - 容器内进入开发环境 `cd ~/agent_engine` 
-    - 使用 `bazel build //example:bin_demo` 进行编译， 编译结束后产生可执行文件 `~/agent_engine/bazel-bin/examples/bin_demo` 可直接运行
+    - 使用 `bazel build //examples:bin_demo` 进行编译， 编译结束后产生可执行文件 `~/agent_engine/bazel-bin/examples/bin_demo` 可直接运行
