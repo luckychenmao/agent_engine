@@ -28,11 +28,12 @@ def main():
     h_content = f"""#pragma once
 
 #include "util/log.h"
+#include "engine/common/base_module.h"
 
 namespace engine {{
 namespace {current_dir} {{
 
-class {class_name} {{
+class {class_name} : common::BaseModule {{
 public:
     {class_name}();
     ~{class_name}();
@@ -40,6 +41,9 @@ public:
     {class_name} &operator=(const {class_name} &) = delete;
 
 public:
+    bool DoLoad() override;
+    bool DoUnload() override;
+
 private:
     LOG_DECLARE();
 
@@ -50,6 +54,8 @@ private:
 """
 
     cpp_content = f"""#include "engine/{current_dir}/{camel_to_snake(class_name)}.h"
+#include "engine/common.h"
+#include "engine/creator_factory.h"
 
 namespace engine {{
 namespace {current_dir} {{

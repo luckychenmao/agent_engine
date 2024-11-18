@@ -1,18 +1,3 @@
-/*
- * Copyright 2014-present Alibaba Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 #include "agent_engine/network/arpc/arpc/ANetRPCServer.h"
 
 #include <assert.h>
@@ -25,7 +10,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "agent_engine/autil/autil/Lock.h"
+#include "agent_engine/util/lock.h"
 #include "agent_engine/network/anet/delaydecodepacket.h"
 #include "agent_engine/network/anet/globalflags.h"
 #include "agent_engine/network/anet/ilogger.h"
@@ -72,7 +57,7 @@ bool ANetRPCServer::Listen(const std::string &address, int timeout, int maxIdleT
         return false;
     }
 
-    autil::ScopedLock lock(_ioComponentMutex);
+    util::ScopedLock lock(_ioComponentMutex);
     _ioComponentList.push_back(ioComponent);
     return true;
 }
@@ -83,7 +68,7 @@ bool ANetRPCServer::Close() {
     ARPC_LOG(DEBUG, "[%p] RPCServer::Close: %s", this, e.what());
 
     {
-        autil::ScopedLock lock(_ioComponentMutex);
+        util::ScopedLock lock(_ioComponentMutex);
         list<IOComponent *>::iterator it = _ioComponentList.begin();
 
         for (; it != _ioComponentList.end(); ++it) {
@@ -101,7 +86,7 @@ void ANetRPCServer::dump(std::ostringstream &out) {
     RPCServer::dump(out);
     // dump iocomponent
     {
-        autil::ScopedLock lock(_ioComponentMutex);
+        util::ScopedLock lock(_ioComponentMutex);
         out << "IOComponent Count: " << _ioComponentList.size() << endl;
 
         for (list<IOComponent *>::iterator it = _ioComponentList.begin(); it != _ioComponentList.end(); ++it) {

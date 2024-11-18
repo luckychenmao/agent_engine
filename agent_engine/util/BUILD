@@ -38,6 +38,17 @@ cc_library(
 )
 
 cc_library(
+    name='lock_free',
+    hdrs=[
+        'lock_free.h',
+        'lock_free_queue.h',
+    ],
+    include_prefix='util',
+    visibility=['//visibility:public'],
+    alwayslink=True
+)
+
+cc_library(
     name='thread',
     srcs=[
         'thread.cc',
@@ -60,7 +71,7 @@ cc_library(
     ],
     include_prefix='util',
     visibility=['//visibility:public'],
-    deps=[':exception', ':log', ':string_helper', 'lock'],
+    deps=[':exception', ':log', ':string_helper', 'lock', 'lock_free'],
     alwayslink=True
 )
 

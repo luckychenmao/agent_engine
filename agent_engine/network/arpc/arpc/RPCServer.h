@@ -1,18 +1,3 @@
-/*
- * Copyright 2014-present Alibaba Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 #ifndef ARPC_RPCSERVER_H
 #define ARPC_RPCSERVER_H
 #include <assert.h>
@@ -33,8 +18,8 @@
 #include "agent_engine/network/arpc/arpc/ThreadPoolDescriptor.h"
 #include "agent_engine/network/arpc/arpc/proto/rpc_extensions.pb.h"
 #include "agent_engine/network/arpc/arpc/util/Log.h"
-#include "autil/Lock.h"
-#include "autil/LockFreeThreadPool.h"
+#include "agent_engine/util/lock.h"
+#include "agent_engine/util/lock_free_thread_pool.h"
 
 ARPC_BEGIN_NAMESPACE(arpc);
 
@@ -60,8 +45,8 @@ const int LISTEN_BACKLOG = 256;
 class RPCServer {
 public:
     typedef std::pair<std::pair<std::shared_ptr<RPCService>, RPCService *>, RPCMethodDescriptor *> ServiceMethodPair;
-    typedef std::map<std::string, autil::ThreadPoolBasePtr> ThreadPoolMap;
-    typedef std::map<RPCService *, autil::ThreadPoolBasePtr> ServiceThreadPoolMap;
+    typedef std::map<std::string, util::ThreadPoolBasePtr> ThreadPoolMap;
+    typedef std::map<RPCService *, util::ThreadPoolBasePtr> ServiceThreadPoolMap;
     typedef std::unordered_map<uint32_t, ServiceMethodPair> RPCCallMap;
 
 public:
@@ -117,13 +102,13 @@ public:
                          const std::string &methodName,
                          ThreadPoolDescriptor threadPoolDescriptor);
 
-    bool RegisterService(RPCService *rpcService, const autil::ThreadPoolBasePtr &pool);
+    bool RegisterService(RPCService *rpcService, const util::ThreadPoolBasePtr &pool);
 
-    bool RegisterThreadPool(const autil::ThreadPoolBasePtr &pool);
+    bool RegisterThreadPool(const util::ThreadPoolBasePtr &pool);
     /**
      * Get thread pool shared pointer by its name.
      */
-    autil::ThreadPoolBasePtr GetThreadPool(const std::string &threadPoolName = DEFAULT_TREAHDPOOL_NAME) const;
+    util::ThreadPoolBasePtr GetThreadPool(const std::string &threadPoolName = DEFAULT_TREAHDPOOL_NAME) const;
 
     /**
      * Get all thread pool names
@@ -134,7 +119,7 @@ public:
      * Get thread pool shared pointer by RPC service pointer.
      * One or more services will map to one thread pool.
      */
-    autil::ThreadPoolBasePtr GetServiceThreadPool(RPCService *rpcService) const;
+    util::ThreadPoolBasePtr GetServiceThreadPool(RPCService *rpcService) const;
 
     version_t GetVersion() { return _version; }
 
@@ -145,7 +130,7 @@ public:
     void RecoverServer();
 
     size_t GetThreadPoolNum() {
-        autil::ScopedReadLock lock(_threadPoolLock);
+        util::ScopedReadLock lock(_threadPoolLock);
         return _threadPoolMap.size();
     }
 
@@ -170,18 +155,18 @@ protected:
     RPCServerAdapter *_serverAdapter;
     MessageCodec *_messageCodec;
 
-    mutable autil::ReadWriteLock _mutex;
+    mutable util::ReadWriteLock _mutex;
     RPCCallMap _rpcCallMap;
 
     ThreadPoolMap _threadPoolMap;
-    mutable autil::ReadWriteLock _threadPoolLock;
+    mutable util::ReadWriteLock _threadPoolLock;
     ServiceThreadPoolMap _serviceThreadPoolMap;
-    mutable autil::ReadWriteLock _serviceThreadPoolLock;
+    mutable util::ReadWriteLock _serviceThreadPoolLock;
 
     version_t _version;
     size_t _defaultThreadNum;
     size_t _defaultQueueSize;
-    mutable autil::ReadWriteLock _sharedThreadPoolLock;
+    mutable util::ReadWriteLock _sharedThreadPoolLock;
     std::string _sharedThreadPoolName;
     bool _poolOverride = false;
 };

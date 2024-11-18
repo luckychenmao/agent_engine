@@ -6,7 +6,7 @@
 #include "network/server_config.h"
 
 namespace engine {
-namespace modules {
+namespace worker {
 
 LOG_SETUP(engine.modules, AgentServiceModule);
 
@@ -39,5 +39,5 @@ bool AgentServiceModule::DoUnload() {
 
 REGISTER_MODULE(AgentServiceModule);
 
-} // namespace modules
+} // namespace worker
 } // namespace engine

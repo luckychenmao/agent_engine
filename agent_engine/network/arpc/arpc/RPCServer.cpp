@@ -1,18 +1,3 @@
-/*
- * Copyright 2014-present Alibaba Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 #include "agent_engine/network/arpc/arpc/RPCServer.h"
 
 #include <algorithm>
@@ -34,7 +19,7 @@
 #include "agent_engine/network/arpc/arpc/RPCServerList.h"
 #include "agent_engine/network/arpc/arpc/proto/rpc_extensions.pb.h"
 #include "agent_engine/network/arpc/arpc/util/Log.h"
-#include "autil/LockFreeThreadPool.h"
+#include "agent_engine/util/lock_free_thread_pool.h"
 
 using namespace std;
 using namespace anet;
@@ -68,7 +53,7 @@ bool RPCServer::RegisterService(RPCService *rpcService, ThreadPoolDescriptor thr
     std::string threadPoolName = "";
     bool overrided = false;
     if (threadPoolDescriptor._allowSharedPoolOverride) {
-        autil::ScopedReadLock lock(_sharedThreadPoolLock);
+        util::ScopedReadLock lock(_sharedThreadPoolLock);
         if (_poolOverride) {
             threadPoolName = _sharedThreadPoolName;
             overrided = true;
@@ -89,7 +74,7 @@ bool RPCServer::RegisterService(RPCService *rpcService, ThreadPoolDescriptor thr
 
     if (doRegisterService(rpcService)) {
         auto threadPool = GetThreadPool(threadPoolDescriptor.threadPoolName);
-        autil::ScopedWriteLock lock(_serviceThreadPoolLock);
+        util::ScopedWriteLock lock(_serviceThreadPoolLock);
         _serviceThreadPoolMap[rpcService] = threadPool;
         return true;
     }
@@ -97,7 +82,7 @@ bool RPCServer::RegisterService(RPCService *rpcService, ThreadPoolDescriptor thr
     return false;
 }
 
-bool RPCServer::RegisterService(RPCService *rpcService, const autil::ThreadPoolBasePtr &pool) {
+bool RPCServer::RegisterService(RPCService *rpcService, const util::ThreadPoolBasePtr &pool) {
     bool ret = RegisterThreadPool(pool);
     if (!ret) {
         ARPC_LOG(ERROR, "register thread pool failed");
@@ -105,7 +90,7 @@ bool RPCServer::RegisterService(RPCService *rpcService, const autil::ThreadPoolB
     }
     if (doRegisterService(rpcService)) {
         auto threadPool = GetThreadPool(pool->getName());
-        autil::ScopedWriteLock lock(_serviceThreadPoolLock);
+        util::ScopedWriteLock lock(_serviceThreadPoolLock);
         _serviceThreadPoolMap[rpcService] = threadPool;
         return true;
     }
@@ -124,7 +109,7 @@ bool RPCServer::RegisterService(const std::shared_ptr<RPCService> &rpcService,
 
     if (doRegisterService(rpcService, methodName)) {
         auto threadPool = GetThreadPool(threadPoolDescriptor.threadPoolName);
-        autil::ScopedWriteLock lock(_serviceThreadPoolLock);
+        util::ScopedWriteLock lock(_serviceThreadPoolLock);
         _serviceThreadPoolMap[rpcService.get()] = threadPool;
         return true;
     }
@@ -132,35 +117,35 @@ bool RPCServer::RegisterService(const std::shared_ptr<RPCService> &rpcService,
     return false;
 }
 
-bool RPCServer::RegisterThreadPool(const autil::ThreadPoolBasePtr &pool) {
+bool RPCServer::RegisterThreadPool(const util::ThreadPoolBasePtr &pool) {
     if (!pool) {
         return false;
     }
     {
-        autil::ScopedWriteLock lock(_threadPoolLock);
+        util::ScopedWriteLock lock(_threadPoolLock);
         _threadPoolMap[pool->getName()] = pool;
     }
     {
-        autil::ScopedWriteLock lock(_sharedThreadPoolLock);
+        util::ScopedWriteLock lock(_sharedThreadPoolLock);
         _sharedThreadPoolName = pool->getName();
         _poolOverride = true;
     }
     return true;
 }
 
-autil::ThreadPoolBasePtr RPCServer::GetThreadPool(const string &threadPoolName) const {
-    autil::ScopedReadLock lock(_threadPoolLock);
+util::ThreadPoolBasePtr RPCServer::GetThreadPool(const string &threadPoolName) const {
+    util::ScopedReadLock lock(_threadPoolLock);
     ThreadPoolMap::const_iterator it = _threadPoolMap.find(threadPoolName);
 
     if (it != _threadPoolMap.end()) {
         return it->second;
     }
 
-    return autil::ThreadPoolBasePtr();
+    return util::ThreadPoolBasePtr();
 }
 
 std::vector<std::string> RPCServer::GetThreadPoolNames() const {
-    autil::ScopedReadLock lock(_threadPoolLock);
+    util::ScopedReadLock lock(_threadPoolLock);
     std::vector<std::string> threadPoolNames;
 
     for (auto &item : _threadPoolMap) {
@@ -170,19 +155,19 @@ std::vector<std::string> RPCServer::GetThreadPoolNames() const {
     return threadPoolNames;
 }
 
-autil::ThreadPoolBasePtr RPCServer::GetServiceThreadPool(RPCService *rpcService) const {
-    autil::ScopedReadLock lock(_serviceThreadPoolLock);
+util::ThreadPoolBasePtr RPCServer::GetServiceThreadPool(RPCService *rpcService) const {
+    util::ScopedReadLock lock(_serviceThreadPoolLock);
     ServiceThreadPoolMap::const_iterator it = _serviceThreadPoolMap.find(rpcService);
 
     if (it != _serviceThreadPoolMap.end()) {
         return it->second;
     }
 
-    return autil::ThreadPoolBasePtr();
+    return util::ThreadPoolBasePtr();
 }
 
 bool RPCServer::addAndStartThreadPool(const ThreadPoolDescriptor &desc) {
-    autil::ThreadPoolBasePtr threadPoolPtr = GetThreadPool(desc.threadPoolName);
+    util::ThreadPoolBasePtr threadPoolPtr = GetThreadPool(desc.threadPoolName);
 
     if (threadPoolPtr != NULL) {
         return true;
@@ -194,19 +179,19 @@ bool RPCServer::addAndStartThreadPool(const ThreadPoolDescriptor &desc) {
         threadNum = _defaultThreadNum;
         queueSize = _defaultQueueSize;
     }
-    threadPoolPtr.reset(new autil::LockFreeThreadPool(threadNum, queueSize, desc.factory, desc.threadPoolName));
+    threadPoolPtr.reset(new util::LockFreeThreadPool(threadNum, queueSize, desc.factory, desc.threadPoolName));
     if (!threadPoolPtr->start()) {
         ARPC_LOG(ERROR, "start thread pool failed");
         return false;
     }
 
-    autil::ScopedWriteLock lock(_threadPoolLock);
+    util::ScopedWriteLock lock(_threadPoolLock);
     _threadPoolMap[desc.threadPoolName] = threadPoolPtr;
     return true;
 }
 
 void RPCServer::stopThreadPools() {
-    autil::ScopedWriteLock lock(_threadPoolLock);
+    util::ScopedWriteLock lock(_threadPoolLock);
     ThreadPoolMap::iterator it = _threadPoolMap.begin();
 
     for (; it != _threadPoolMap.end(); ++it) {
@@ -218,7 +203,7 @@ void RPCServer::stopThreadPools() {
 
 void RPCServer::removeServiceThreadPool(RPCService *rpcService) {
     {
-        autil::ScopedWriteLock lock(_serviceThreadPoolLock);
+        util::ScopedWriteLock lock(_serviceThreadPoolLock);
         _serviceThreadPoolMap.erase(rpcService);
     }
     reconstructThreadPoolMap();
@@ -227,7 +212,7 @@ void RPCServer::removeServiceThreadPool(RPCService *rpcService) {
 void RPCServer::reconstructThreadPoolMap() {
     ServiceThreadPoolMap serviceMap;
     {
-        autil::ScopedReadLock lock(_serviceThreadPoolLock);
+        util::ScopedReadLock lock(_serviceThreadPoolLock);
         serviceMap = _serviceThreadPoolMap;
     }
     ThreadPoolMap newThreadPoolMap;
@@ -238,7 +223,7 @@ void RPCServer::reconstructThreadPoolMap() {
     }
     ThreadPoolMap swapMap;
     {
-        autil::ScopedWriteLock lock(_threadPoolLock);
+        util::ScopedWriteLock lock(_threadPoolLock);
         swapMap.swap(_threadPoolMap);
         _threadPoolMap = newThreadPoolMap;
     }
@@ -261,7 +246,7 @@ void RPCServer::dump(ostringstream &out) {
     // dump thread pool
     string leadingspaces = "    ";
     {
-        autil::ScopedReadLock lock(_threadPoolLock);
+        util::ScopedReadLock lock(_threadPoolLock);
         out << "ThreadPool Count: " << _threadPoolMap.size() << endl;
         int threadPoolIdx = 0;
 
@@ -274,7 +259,7 @@ void RPCServer::dump(ostringstream &out) {
     // dump service
     string methodspaces = leadingspaces + leadingspaces;
     {
-        autil::ScopedReadLock lock(_serviceThreadPoolLock);
+        util::ScopedReadLock lock(_serviceThreadPoolLock);
         out << "Service Count: " << _serviceThreadPoolMap.size() << endl;
         int serviceIdx = 0;
 
@@ -295,7 +280,7 @@ void RPCServer::dump(ostringstream &out) {
 }
 
 RPCServer::ServiceMethodPair RPCServer::GetRpcCall(const CallId &callId) const {
-    autil::ScopedReadLock lock(_mutex);
+    util::ScopedReadLock lock(_mutex);
     auto it = _rpcCallMap.find(callId.intId);
     if (it == _rpcCallMap.end()) {
         ARPC_LOG(ERROR, "can not find the rpccall, callId: [%d]", callId.intId);
@@ -323,7 +308,7 @@ bool RPCServer::doRegisterService(RPCService *rpcService) {
         }
         newMap[rpcCode] = {{nullptr, rpcService}, pMethodDes};
     }
-    autil::ScopedWriteLock lock(_mutex);
+    util::ScopedWriteLock lock(_mutex);
     auto currentMap = _rpcCallMap;
     for (const auto &pair : currentMap) {
         auto rpcCode = pair.first;
@@ -394,12 +379,12 @@ void RPCServer::unRegisterService(const std::shared_ptr<RPCService> &rpcService)
 }
 
 RPCServer::RPCCallMap RPCServer::GetRPCCallMap() const {
-    autil::ScopedReadLock lock(_mutex);
+    util::ScopedReadLock lock(_mutex);
     return _rpcCallMap;
 }
 
 void RPCServer::SetRPCCallMap(const RPCCallMap &newMap) {
-    autil::ScopedWriteLock lock(_mutex);
+    util::ScopedWriteLock lock(_mutex);
     _rpcCallMap = newMap;
 }
 

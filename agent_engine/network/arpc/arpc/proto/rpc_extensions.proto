@@ -1,19 +1,17 @@
 // See README.txt for information and build instructions.
 syntax = "proto2";
 
-import "google/protobuf/descriptor.proto";
 package arpc;
-option java_package = "com.alibaba.search.common.arpc";
 option cc_enable_arenas = true;
 
-extend google.protobuf.ServiceOptions {
-  //when you use this options in you .proto, it should < 2**16
-  optional uint32 global_service_id = 1000;
-}
-extend google.protobuf.MethodOptions {
-  //when you use this options in you .proto, it should < 2**16
-  optional uint32 local_method_id = 1000;
-}
+// extend google.protobuf.ServiceOptions {
+//   //when you use this options in you .proto, it should < 2**16
+//   optional uint32 global_service_id = 1000;
+// }
+// extend google.protobuf.MethodOptions {
+//   //when you use this options in you .proto, it should < 2**16
+//   optional uint32 local_method_id = 1000;
+// }
 
 ////////////////////////////////////////////////////
 //example for using options above
@@ -31,7 +29,7 @@ extend google.protobuf.MethodOptions {
 //    option (arpc.local_method_id) = 2345;
 //    }
 //}
-///////////////////////////////////////////////////// 
+/////////////////////////////////////////////////////
 
 message ErrorMsg {
     optional bytes error_msg = 1;
@@ -75,4 +73,3 @@ enum ErrorCode {
     ARPC_ERROR_APPLICATION         = 101;    //"rpc application error"
     ARPC_ERROR_APP_MIN             = 1024;
 }
-

@@ -1,13 +1,19 @@
-load('//bazel:defs.bzl', 'cc_and_py_proto')
-load('//bazel:bundle.bzl', 'bundle_files')
-cc_and_py_proto(
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_proto_grpc_cpp//:defs.bzl", "cc_proto_library")
+
+proto_library(
     name='proto',
     srcs=['arpc/proto/msg_header.proto', 'arpc/proto/rpc_extensions.proto'],
-    deps=[],
+)
+
+cc_proto_library(
+    name = "proto_cc_proto",
+    protos = [":proto"],
     visibility=['//visibility:public'],
     import_prefix='arpc',
     strip_import_prefix='arpc'
 )
+
 cc_library(
     name='arpc',
     visibility=['//visibility:public'],
@@ -39,52 +45,51 @@ cc_library(
     copts=['-Wformat-truncation=0'],
     alwayslink=True
 )
-test_deps = [':arpc', ':arpc_test_proto_cc_proto']
 test_copts = ['-Wno-deprecated-declarations']
-py_library(
-    name='arpc_python',
-    srcs=glob(['arpc/python/*.py']),
-    visibility=['//visibility:public']
-)
-filegroup(
-    name='py_init_file',
-    srcs=['arpc/python/__init__.py'],
-    visibility=['//visibility:public']
-)
-bundle_files(
-    name='arpc_init_package',
-    prefix='usr/local/lib/python/site-packages/arpc',
-    strip_prefix='arpc/python',
-    srcs=[':py_init_file'],
-    tags=['manual']
-)
-bundle_files(
-    name='arpc_proto_init_package',
-    prefix='usr/local/lib/python/site-packages/arpc/proto',
-    strip_prefix='arpc/python',
-    srcs=[':py_init_file'],
-    tags=['manual']
-)
-bundle_files(
-    name='arpc_python_inner_package',
-    prefix='usr/local/lib/python/site-packages',
-    srcs=[':arpc_python'],
-    deps=[':arpc_init_package'],
-    tags=['manual']
-)
-bundle_files(
-    name='arpc_proto_inner_package',
-    prefix='usr/local/lib/python/site-packages',
-    srcs=[':proto_py'],
-    deps=[':arpc_proto_init_package'],
-    tags=['manual']
-)
-bundle_files(
-    name='arpc_python_package',
-    prefix='usr/local/lib/python/site-packages',
-    strip_prefix='arpc/python',
-    srcs=[':py_init_file'],
-    deps=[':arpc_python_inner_package', ':arpc_proto_inner_package'],
-    tags=['manual'],
-    visibility=['//visibility:public']
-)
+# py_library(
+#     name='arpc_python',
+#     srcs=glob(['arpc/python/*.py']),
+#     visibility=['//visibility:public']
+# )
+# filegroup(
+#     name='py_init_file',
+#     srcs=['arpc/python/__init__.py'],
+#     visibility=['//visibility:public']
+# )
+# bundle_files(
+#     name='arpc_init_package',
+#     prefix='usr/local/lib/python/site-packages/arpc',
+#     strip_prefix='arpc/python',
+#     srcs=[':py_init_file'],
+#     tags=['manual']
+# )
+# bundle_files(
+#     name='arpc_proto_init_package',
+#     prefix='usr/local/lib/python/site-packages/arpc/proto',
+#     strip_prefix='arpc/python',
+#     srcs=[':py_init_file'],
+#     tags=['manual']
+# )
+# bundle_files(
+#     name='arpc_python_inner_package',
+#     prefix='usr/local/lib/python/site-packages',
+#     srcs=[':arpc_python'],
+#     deps=[':arpc_init_package'],
+#     tags=['manual']
+# )
+# bundle_files(
+#     name='arpc_proto_inner_package',
+#     prefix='usr/local/lib/python/site-packages',
+#     srcs=[':proto_py'],
+#     deps=[':arpc_proto_init_package'],
+#     tags=['manual']
+# )
+# bundle_files(
+#     name='arpc_python_package',
+#     prefix='usr/local/lib/python/site-packages',
+#     strip_prefix='arpc/python',
+#     srcs=[':py_init_file'],
+#     deps=[':arpc_python_inner_package', ':arpc_proto_inner_package'],
+#     tags=['manual'],
+#     visibility=['//visibility:public']
+# )

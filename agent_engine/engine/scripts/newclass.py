@@ -53,7 +53,7 @@ private:
 
 namespace engine {{
 namespace {current_dir} {{
-LOG_SETUP({current_dir}, {class_name});
+LOG_SETUP(engine.{current_dir}, {class_name});
 
 {class_name}::{class_name}() {{}}
 {class_name}::~{class_name}() {{}}

@@ -9,7 +9,7 @@ class GrpcServer;
 }
 
 namespace engine {
-namespace modules {
+namespace worker {
 
 class AgentServiceModule : public common::BaseModule, public proto::AgentChatService::AsyncService {
 public:
@@ -32,5 +32,5 @@ private:
 private:
     LOG_DECLARE();
 };
-} // namespace modules
+} // namespace worker
 } // namespace engine
