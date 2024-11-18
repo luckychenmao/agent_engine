@@ -15,8 +15,32 @@
              '("gnu" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives
              (cons "gnu-devel" "https://elpa.gnu.org/devel/")
-                          t)
+             t)
+;; copilot
+(add-to-list 'load-path
+	     (expand-file-name (concat user-emacs-directory "copilot.el")))
 (package-initialize)
+(require 'copilot)
+(add-hook 'prog-mode-hook 'copilot-mode)
+(add-hook 'text-mode-hook 'copilot-mode)
+(defun my-tab ()
+  (interactive)
+  (or (copilot-accept-completion)
+      (ac-expand nil)))
+(with-eval-after-load 'auto-complete
+  (setq ac-disable-inline t)
+  (setq ac-candidate-menu-min 0))
+(add-to-list 'copilot-indentation-alist '(prog-mode 2))
+(add-to-list 'copilot-indentation-alist '(org-mode 2))
+(add-to-list 'copilot-indentation-alist '(text-mode 2))
+(add-to-list 'copilot-indentation-alist '(closure-mode 2))
+(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion-by-word)
+(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion-by-word)
+(define-key copilot-completion-map (kbd "C-M-n") 'copilot-next-completion)
+(define-key copilot-completion-map (kbd "C-M-p") 'copilot-previous-completion)
+
+;; 优先使用左右分屏
+(setq split-window-preferred-function 'split-window-horizontally)
 
 (setq grep-command "grep --exclude=\"*\\.svn*\" -nHi -e ")
 (setq grep-cpp-command "grep --include=\"*\\.cpp\" --include=\"*\\.cc\" --include=\"*\.h\" --exclude=\"*Test\.cpp\" -r -nHi -e ")
@@ -139,7 +163,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(impatient-mode markdown-preview-mode grip-mode markdown-mode bazel clang-format magit standard-themes helm)))
+   '(astyle jsonrpc editorconfig impatient-mode markdown-preview-mode grip-mode markdown-mode bazel clang-format magit standard-themes helm)))
 
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
